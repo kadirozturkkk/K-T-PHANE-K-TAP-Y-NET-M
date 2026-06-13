@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Kütüphane Yönetim Sistemi</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2 { color: #333; }
+        .alert { padding: 10px; background-color: #f44336; color: white; margin-bottom: 15px; border-radius: 4px; }
+        .success { padding: 10px; background-color: #4CAF50; color: white; margin-bottom: 15px; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #007BFF; color: white; }
+        .btn { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; color: white; }
+        .btn-add { background-color: #28a745; }
+        .btn-borrow { background-color: #ffc107; color: black; }
+        .btn-return { background-color: #17a2b8; }
+        .form-group { margin-bottom: 15px; }
+        .form-group input { padding: 8px; width: 200px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📚 Kütüphane Kitap Yönetim Sistemi</h1>
+    <p>BGT 132 Final Projesi Demosu</p>
+
+    {% if hata %}
+        <div class="alert">{{ hata }}</div>
+    {% endif %}
+    {% if mesaj %}
+        <div class="success">{{ mesaj }}</div>
+    {% endif %}
+
+    <h2>Yeni Kitap Ekle</h2>
+    <form action="/ekle" method="POST" class="form-group">
+        <input type="text" name="baslik" placeholder="Kitap Adı" required>
+        <input type="text" name="yazar" placeholder="Yazar" required>
+        <input type="text" name="isbn" placeholder="ISBN Numarası" required>
+        <button type="submit" class="btn btn-add">Kitabı Kaydet</button>
+    </form>
+
+    <h2>Mevcut Kitaplar</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Kitap Adı</th>
+                <th>Yazar</th>
+                <th>ISBN</th>
+                <th>Durum</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for kitap in kitaplar %}
+            <tr>
+                <td>{{ kitap.baslik }}</td>
+                <td>{{ kitap.yazar }}</td>
+                <td>{{ kitap.isbn }}</td>
+                <td>
+                    {% if kitap.odunc_verildi_mi %}
+                        <span style="color: red; font-weight: bold;">Ödünç Verildi</span>
+                    {% else %}
+                        <span style="color: green; font-weight: bold;">Kütüphanede</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not kitap.odunc_verildi_mi %}
+                        <a href="/odunc/{{ kitap.isbn }}" class="btn btn-borrow">Ödünç Al</a>
+                    {% else %}
+                        <a href="/iade/{{ kitap.isbn }}" class="btn btn-return">İade Et</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
